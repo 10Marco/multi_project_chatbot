@@ -1,0 +1,34 @@
+{
+  "lookup": {
+    "rules": {
+      "[{\"prev_action\": {\"action_name\": \"action_listen\"}, \"user\": {\"intent\": \"informar_descricao\"}}]": "utter_confirmar",
+      "[{\"prev_action\": {\"action_name\": \"action_listen\"}, \"user\": {\"intent\": \"informar_descricao\"}}, {\"prev_action\": {\"action_name\": \"utter_confirmar\"}, \"user\": {\"intent\": \"informar_descricao\"}}]": "action_listen",
+      "[{\"prev_action\": {\"action_name\": \"action_listen\"}, \"user\": {\"intent\": \"informar_usuario\"}}]": "utter_tipo_problema",
+      "[{\"prev_action\": {\"action_name\": \"action_listen\"}, \"user\": {\"intent\": \"informar_usuario\"}}, {\"prev_action\": {\"action_name\": \"utter_tipo_problema\"}, \"user\": {\"intent\": \"informar_usuario\"}}]": "action_listen",
+      "[{\"prev_action\": {\"action_name\": \"action_listen\"}, \"user\": {\"intent\": \"escolher_tipo\"}}]": "utter_descricao",
+      "[{\"prev_action\": {\"action_name\": \"action_listen\"}, \"user\": {\"intent\": \"escolher_tipo\"}}, {\"prev_action\": {\"action_name\": \"utter_descricao\"}, \"user\": {\"intent\": \"escolher_tipo\"}}]": "action_listen",
+      "[{\"prev_action\": {\"action_name\": \"action_listen\"}, \"user\": {\"intent\": \"confirmar\"}}]": "utter_criar_chamado",
+      "[{\"prev_action\": {\"action_name\": \"action_listen\"}, \"user\": {\"intent\": \"confirmar\"}}, {\"prev_action\": {\"action_name\": \"utter_criar_chamado\"}, \"user\": {\"intent\": \"confirmar\"}}]": "action_listen",
+      "[{\"prev_action\": {\"action_name\": \"action_listen\"}, \"user\": {\"intent\": \"iniciar\"}}]": "utter_inicio",
+      "[{\"prev_action\": {\"action_name\": \"action_listen\"}, \"user\": {\"intent\": \"iniciar\"}}, {\"prev_action\": {\"action_name\": \"utter_inicio\"}, \"user\": {\"intent\": \"iniciar\"}}]": "action_listen"
+    },
+    "rule_only_slots": [],
+    "rule_only_loops": [],
+    "rules_for_loop_unhappy_path": {},
+    "rules_not_in_stories": [
+      "[{\"prev_action\": {\"action_name\": \"action_listen\"}, \"user\": {\"intent\": \"escolher_tipo\"}}, {\"prev_action\": {\"action_name\": \"utter_descricao\"}, \"user\": {\"intent\": \"escolher_tipo\"}}]",
+      "[{\"prev_action\": {\"action_name\": \"action_listen\"}, \"user\": {\"intent\": \"informar_usuario\"}}, {\"prev_action\": {\"action_name\": \"utter_tipo_problema\"}, \"user\": {\"intent\": \"informar_usuario\"}}]",
+      "[{\"prev_action\": {\"action_name\": \"action_listen\"}, \"user\": {\"intent\": \"iniciar\"}}, {\"prev_action\": {\"action_name\": \"utter_inicio\"}, \"user\": {\"intent\": \"iniciar\"}}]",
+      "predicting default action with intent session_start",
+      "[{\"prev_action\": {\"action_name\": \"action_listen\"}, \"user\": {\"intent\": \"confirmar\"}}, {\"prev_action\": {\"action_name\": \"utter_criar_chamado\"}, \"user\": {\"intent\": \"confirmar\"}}]",
+      "[{\"prev_action\": {\"action_name\": \"action_listen\"}, \"user\": {\"intent\": \"iniciar\"}}]",
+      "[{\"prev_action\": {\"action_name\": \"action_listen\"}, \"user\": {\"intent\": \"confirmar\"}}]",
+      "predicting default action with intent restart",
+      "[{\"prev_action\": {\"action_name\": \"action_listen\"}, \"user\": {\"intent\": \"escolher_tipo\"}}]",
+      "[{\"prev_action\": {\"action_name\": \"action_listen\"}, \"user\": {\"intent\": \"informar_descricao\"}}]",
+      "[{\"prev_action\": {\"action_name\": \"action_listen\"}, \"user\": {\"intent\": \"informar_descricao\"}}, {\"prev_action\": {\"action_name\": \"utter_confirmar\"}, \"user\": {\"intent\": \"informar_descricao\"}}]",
+      "[{\"prev_action\": {\"action_name\": \"action_listen\"}, \"user\": {\"intent\": \"informar_usuario\"}}]",
+      "predicting default action with intent back"
+    ]
+  }
+}

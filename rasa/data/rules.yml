@@ -1,0 +1,38 @@
+version: "3.1"
+
+rules:
+
+- rule: iniciar atendimento
+  steps:
+    - intent: iniciar
+    - action: utter_inicio
+
+- rule: receber usuario
+  steps:
+    - intent: informar_usuario
+    - action: utter_tipo_problema
+
+- rule: escolher tipo
+  steps:
+    - intent: escolher_tipo
+    - action: utter_descricao
+
+- rule: receber descricao
+  steps:
+    - intent: informar_descricao
+    - action: utter_confirmar
+
+- rule: confirmar abertura
+  steps:
+    - intent: confirmar
+    - action: utter_criar_chamado
+
+- rule: fallback
+  steps:
+    - intent: nlu_fallback
+    - action: utter_fallback
+    
+- rule: cancelar sempre funciona
+  steps:
+    - intent: negar
+    - action: utter_cancelado

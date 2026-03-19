@@ -1,0 +1,30 @@
+version: "3.1"
+
+stories:
+
+- story: fluxo completo chamado
+  steps:
+    - intent: iniciar
+    - action: utter_inicio
+
+    - intent: informar_usuario
+    - action: utter_tipo_problema
+
+    - intent: escolher_tipo
+    - action: utter_descricao
+
+    - intent: informar_descricao
+    - action: utter_confirmar
+
+    - intent: confirmar
+    - action: utter_criar_chamado
+
+- story: usuario cancela chamado
+  steps:
+    - intent: negar
+    - action: utter_cancelado
+
+- story: fallback
+  steps:
+    - intent: nlu_fallback
+    - action: utter_fallback

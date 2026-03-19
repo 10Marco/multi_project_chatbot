@@ -1,0 +1,52 @@
+version: "3.1"
+
+nlu:
+
+- intent: iniciar
+  examples: |
+    - oi
+    - olá
+    - ola
+    - bom dia
+    - boa tarde
+    - boa noite
+    - iniciar atendimento
+    - quero ajuda
+
+- intent: informar_usuario
+  examples: |
+    - marco.braganca
+    - joao.silva
+    - maria.pereira
+    - meu usuario é marco.braganca
+
+- intent: escolher_tipo
+  examples: |
+    - 1
+    - acesso
+    - senha
+    - problema de acesso
+    - 2
+    - criar chamado
+    - abrir chamado
+
+- intent: informar_descricao
+  examples: |
+    - não consigo acessar o sistema
+    - erro ao entrar no sei
+    - sistema fora do ar
+    - está dando erro
+
+- intent: confirmar
+  examples: |
+    - sim
+    - confirmar
+    - ok
+    - pode abrir
+    - pode criar
+
+- intent: negar
+  examples: |
+    - não
+    - cancelar
+    - parar

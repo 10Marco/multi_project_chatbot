@@ -1,0 +1,68 @@
+version: "3.1"
+
+intents:
+  - iniciar
+  - informar_usuario
+  - escolher_tipo
+  - informar_descricao
+  - confirmar
+  - negar
+  - nlu_fallback
+
+slots:
+  usuario_sei:
+    type: text
+    mappings:
+      - type: from_text
+
+  tipo_problema:
+    type: text
+    mappings:
+      - type: from_text
+
+  descricao:
+    type: text
+    mappings:
+      - type: from_text
+
+responses:
+  utter_inicio:
+    - text: |
+        👋 Bem-vindo ao atendimento!
+
+        Informe seu usuário:
+        (ex: marco.braganca)
+
+  utter_tipo_problema:
+    - text: |
+        Escolha uma opção:
+
+        1️⃣ Acesso / Senha
+        2️⃣ Criar chamado
+
+  utter_descricao:
+    - text: "Descreva o problema:"
+
+  utter_confirmar:
+    - text: "Confirmar abertura? (sim/não)"
+
+  utter_criar_chamado:
+    - text: "Abrindo chamado..."
+      custom:
+        action: create_ticket
+
+  utter_cancelado:
+    - text: "❌ Operação cancelada. Digite 'oi' para reiniciar."
+
+  utter_fallback:
+    - text: |
+        🤖 Não entendi.
+
+        Você pode:
+        1️⃣ Digitar "oi"
+        2️⃣ Informar usuário
+        3️⃣ Descrever problema
+
+session_config:
+  session_expiration_time: 60
+  carry_over_slots_to_new_session: true
