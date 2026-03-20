@@ -1,11 +1,23 @@
-.env
-.env.*
-!.env.example
-
-node_modules
-auth_info
-_IGNORE_chatbot
-
-__pycache__
+# Python
+__pycache__/
 *.pyc
+
+# Rasa
+.rasa/
+models/
+.config/
+.keras/
+
+# Node
+node_modules/
+.node-persist/
+
+# WhatsApp sessão
+auth_info/
+_IGNORE_chatbot/
+
+# Env
+.env
+
+# Logs
 *.log
