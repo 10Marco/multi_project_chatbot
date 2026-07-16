@@ -1,5 +1,0 @@
-tracker_store:
-  type: redis
-  url: redis
-  port: 6379
-  db: 0

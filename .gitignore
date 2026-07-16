@@ -2,12 +2,6 @@
 __pycache__/
 *.pyc
 
-# Rasa
-.rasa/
-models/
-.config/
-.keras/
-
 # Node
 node_modules/
 .node-persist/
@@ -15,9 +9,20 @@ node_modules/
 # WhatsApp sessão
 auth_info/
 _IGNORE_chatbot/
+**/runtime/
 
-# Env
+# Ambiente
 .env
+.env.*
 
 # Logs
 *.log
+
+# IDE
+.vscode/
+.idea/
+
+# Build
+dist/
+build/
+coverage/

@@ -1,0 +1,4 @@
+.git
+**/__pycache__/
+**/*.pyc
+whatsapp-service/auth_info/

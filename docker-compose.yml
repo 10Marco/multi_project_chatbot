@@ -1,52 +1,29 @@
-version: "3.9"
-
 services:
 
-  rasa:
-    image: rasa/rasa:3.6.2
-    ports:
-      - "5005:5005"
-    volumes:
-      - ./rasa:/app
-    command: >
-      run --enable-api --cors "*" --debug
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:5005/status"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-
-  action_server:
-    image: rasa/rasa-sdk:3.6.2
-    ports:
-      - "5055:5055"
-    volumes:
-      - ./rasa/actions:/app/actions
-
   api:
-    image: python:3.10-slim
+    build: ./api
     volumes:
       - ./api:/app
-      - ./.env:/app/.env
-    working_dir: /app
-    command: >
-      bash -c "pip install fastapi uvicorn requests python-dotenv redis &&
-               uvicorn app:app --host 0.0.0.0 --port 8000 --reload"
+    env_file:
+      - .env
+    environment:
+      PYTHONUNBUFFERED: "1"
+      PYTHONUTF8: "1"
+      LANG: C.UTF-8
+      LC_ALL: C.UTF-8
     ports:
       - "8001:8000"
     depends_on:
-      rasa:
-        condition: service_healthy
-      redis:
-        condition: service_started
+      - redis
 
   whatsapp:
     build: ./whatsapp-service
     volumes:
-      - ./whatsapp-service/auth_info:/app/auth_info
+      - ./whatsapp-service/runtime:/app/runtime
     depends_on:
       - api
-    restart: always
+      - redis
+    restart: unless-stopped
 
   redis:
     image: redis:7
