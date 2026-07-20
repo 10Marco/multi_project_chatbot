@@ -1,0 +1,33 @@
+
+
+CATEGORIAS DO CHATBOT 
+
+1 - ALTERAÇÃO DE SENHA ( SISAF, SISAF TRIBUTÁRIO, SISAF ADMINISTRATIVO ) 
+2 - ALTERAÇÃO DE DADOS ( SISAF, SISAF TRIBUTÁRIO, SISAF ADMINISTRATIVO, CHATBOT )
+3 - AUTO NÃO ENCONTRADO NO SISAF 
+4 - MANUTENÇÃO DO SISTEMA ( DESCRIÇÃO DE ERROS E PROBLEMAS ENCONTRADOS )
+5 - SUGESTÃO EVOLUTIVA ( SUGESTÃO DE MELHORIAS PARA SEREM IMPLEMENTADAS )
+6 - OUTROS ( DESCREVA O PROBLEMA ) 
+
+Categoria ITIL - 51 - ALTERAÇÃO DE SENHA ( SISAF, SISAF TRIBUTÁRIO, SISAF ADMINISTRATIVO ) - ID 51
+filho de DIDEP / SISAF 
+grupo encarregado DESENVOLVIMENTO
+
+Categoria ITIL - 52 - ALTERAÇÃO DE DADOS ( SISAF, SISAF TRIBUTÁRIO, SISAF ADMINISTRATIVO, CHATBOT ) - ID 52
+filho de DIDEP / SISAF 
+grupo encarregado DESENVOLVIMENTO
+
+Categoria ITIL - 53 - AUTO NÃO ENCONTRADO NO SISAF - ID 53
+filho de DIDEP / SISAF 
+grupo encarregado DESENVOLVIMENTO
+adicionei o campo ' Código representando a categoria do chamado' DEV -> caso não consiga separar os chamados por desenvolvimendo e infraestrutura, posso colocar algo como DEV e DINF para ter ao menos visual cues
+
+Categoria ITIL - 54 - MANUTENÇÃO DO SISTEMA ( DESCRIÇÃO DE ERROS E PROBLEMAS ENCONTRADOS ) - ID 54
+filho de DIDEP / SISAF 
+grupo encarregado DESENVOLVIMENTO
+adicionei o campo ' Código representando a categoria do chamado' DEV -> caso não consiga separar os chamados por desenvolvimendo e infraestrutura, posso colocar algo como DEV e DINF para ter ao menos visual cues
+
+Categoria ITIL - 55 - OUTROS ( DESCREVA O PROBLEMA ) - ID 55
+sem pai
+sem grupo encarregado
+apenas a descrição do meliante

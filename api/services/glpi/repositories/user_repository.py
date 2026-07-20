@@ -1,12 +1,18 @@
 from db import get_glpi_connection
 
+from utils.text import normalize
+
 from services.glpi.models.requester import Requester
+from services.glpi.repositories.base_repository import BaseRepository
 
 
+class UserRepository(BaseRepository):
 
-class UserRepository:
+    def __init__(self):
+        super().__init__(get_glpi_connection)
 
     def _row_to_requester(self, row):
+
         if not row:
             return None
 
@@ -25,6 +31,7 @@ class UserRepository:
         )
 
     def find_by_id(self, user_id: int):
+
         sql = """
         SELECT
             id,
@@ -43,13 +50,11 @@ class UserRepository:
         LIMIT 1
         """
 
-        with get_glpi_connection() as conn:
-            with conn.cursor() as cursor:
-                cursor.execute(sql, (user_id,))
-                return self._row_to_requester(cursor.fetchone())
+        return self._row_to_requester(
+            self.fetch_one(sql, (user_id,))
+        )
 
     def find_by_phone(self, phone: str):
-        print(f"[GLPI_DB] procurando usuário {phone}")
 
         sql = """
         SELECT
@@ -64,7 +69,7 @@ class UserRepository:
             groups_id,
             is_active
         FROM glpi_users
-            WHERE
+        WHERE
         (
             phone=%s
             OR phone2=%s
@@ -75,30 +80,19 @@ class UserRepository:
         LIMIT 1
         """
 
-        with get_glpi_connection() as conn:
-            with conn.cursor() as cursor:
-                cursor.execute(
-                    sql,
-                    (
-                        phone,
-                        phone,
-                        phone
-                    )
+        return self._row_to_requester(
+            self.fetch_one(
+                sql,
+                (
+                    phone,
+                    phone,
+                    phone
                 )
-                return self._row_to_requester(cursor.fetchone())
-
-    def search(self, value: str):
-        value = value.strip()
-        if not value:
-            return []
-
-        if value.isdigit():
-            user = self.find_by_registration(value)
-            return [user] if user else []
-        
-        return self.search_by_name(value)
+            )
+        )
 
     def find_by_registration(self, registration):
+
         sql = """
         SELECT
             id,
@@ -117,20 +111,12 @@ class UserRepository:
         LIMIT 1
         """
 
-        with get_glpi_connection() as conn:
-            with conn.cursor() as cursor:
+        return self._row_to_requester(
+            self.fetch_one(sql, (registration,))
+        )
 
-                cursor.execute(
-                    sql,
-                    (
-                        registration,
-                    )
-                )
-                return self._row_to_requester(
-                    cursor.fetchone()
-                )
-    
-    def search_by_name(self, text: str):
+    def search_by_name(self, text):
+
         sql = """
         SELECT
             id,
@@ -161,13 +147,24 @@ class UserRepository:
             firstname,
             realname
         LIMIT 10
-
         """
+
         like = f"%{text}%"
-        with get_glpi_connection() as conn:
-            with conn.cursor() as cursor:
-                cursor.execute(sql, (like,))
-                return [
-                    self._row_to_requester(row)
-                    for row in cursor.fetchall()
-                ]
+
+        return [
+            self._row_to_requester(row)
+            for row in self.fetch_all(sql, (like,))
+        ]
+
+    def search(self, value):
+
+        value = normalize(value)
+
+        if not value:
+            return []
+
+        if value.isdigit():
+            user = self.find_by_registration(value)
+            return [user] if user else []
+
+        return self.search_by_name(value)

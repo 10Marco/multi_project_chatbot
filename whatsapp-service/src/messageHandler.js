@@ -1,6 +1,7 @@
 const { callApi } = require("./apiClient");
 const { parseMessage } = require("./messageParser");
 const { sendMessage } = require("./sender");
+const { downloadAttachment } = require("./mediaHandler");
 
 async function handleMessages(sock, messages) {
 
@@ -21,44 +22,40 @@ async function handleMessages(sock, messages) {
     console.log("==============================");
 
     try {
-        const response = await callApi({
+        let attachment = null;
 
+        if (parsed.hasMedia) {
+            attachment = await downloadAttachment(
+                sock,
+                msg
+            );
+        }
+
+        const response = await callApi({
             sender: parsed.sender,
             message: parsed.text,
-            media: parsed.hasMedia,
-            mediaType: parsed.type
-
+            attachment
         });
 
         const { data } = response;
-        console.log("⬅️ API RESPONSE");
-
-        console.dir(data, { depth: null });
 
         if (data.messages?.length) {
-
             for (const message of data.messages) {
-
                 await sendMessage(
                     sock,
                     parsed.sender,
                     message
                 );
-
             }
-
         }
 
     } catch (err) {
-
         console.error(err.response?.data || err.message);
-
     }
 
 }
 
+
 module.exports = {
-
     handleMessages
-
 };

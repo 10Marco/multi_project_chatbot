@@ -1,5 +1,9 @@
 function parseMessage(msg) {
 
+    console.log("========= RAW BAILEYS =========");
+    console.dir(msg, { depth: null });
+    console.log("===============================");
+
     const sender =
         msg.key.participant ||
         msg.key.remoteJid;

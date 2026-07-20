@@ -11,9 +11,9 @@ def build_ticket(ticket: Ticket):
     optional_fields = {
         "itilcategories_id": ticket.category,
         "locations_id": ticket.location,
-        "_users_id_requester": ticket.requester_id(),
+        "_users_id_requester": ticket.requester_id,
     }
-
+ 
     payload.update(
         {key: value for key, value in optional_fields.items() if value is not None}
     )

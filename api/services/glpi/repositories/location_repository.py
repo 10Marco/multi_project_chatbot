@@ -1,143 +1,59 @@
 from db import get_glpi_connection
 
+from services.glpi.repositories.base_repository import BaseRepository
 
-class LocationRepository:
 
+class LocationRepository(BaseRepository):
 
-    def find_by_id(self, location_id: int):
+    def __init__(self):
+        super().__init__(get_glpi_connection)
+
+    def find_by_id(self, location_id):
 
         sql = """
-
         SELECT
-
             id,
-
             name,
-
             completename,
-
             entities_id,
-
             locations_id
-
         FROM glpi_locations
-
-        WHERE
-
-            id=%s
-
+        WHERE id=%s
         LIMIT 1
-
         """
 
-        with get_glpi_connection() as conn:
+        return self.fetch_one(sql, (location_id,))
 
-            with conn.cursor() as cursor:
-
-                cursor.execute(
-
-                    sql,
-
-                    (
-
-                        location_id,
-
-                    )
-
-                )
-
-            return cursor.fetchone()
-
-
-    def search(self, text: str):
-
-        sql = """
-
-        SELECT
-
-            id,
-
-            name,
-
-            completename
-
-        FROM glpi_locations
-
-        WHERE
-
-            LOWER(completename)
-
-            LIKE LOWER(%s)
-
-        ORDER BY
-
-            level,
-
-            completename
-
-        LIMIT 20
-
-        """
+    def search(self, text):
 
         like = f"%{text}%"
 
-        with get_glpi_connection() as conn:
-
-            with conn.cursor() as cursor:
-
-                cursor.execute(
-
-                    sql,
-
-                    (
-
-                        like,
-
-                    )
-
-                )
-
-                return cursor.fetchall()
-
-
-    def list_by_entity(self, entity_id: int):
-
         sql = """
-
         SELECT
-
             id,
-
             name,
-
             completename
-
         FROM glpi_locations
-
-        WHERE
-
-            entities_id=%s
-
+        WHERE LOWER(completename)
+        LIKE LOWER(%s)
         ORDER BY
-
+            level,
             completename
-
+        LIMIT 20
         """
 
-        with get_glpi_connection() as conn:
+        return self.fetch_all(sql, (like,))
 
-            with conn.cursor() as cursor:
+    def list_by_entity(self, entity_id):
 
-                cursor.execute(
+        sql = """
+        SELECT
+            id,
+            name,
+            completename
+        FROM glpi_locations
+        WHERE entities_id=%s
+        ORDER BY completename
+        """
 
-                    sql,
-
-                    (
-
-                        entity_id,
-
-                    )
-
-                )
-
-                return cursor.fetchall()
+        return self.fetch_all(sql, (entity_id,))

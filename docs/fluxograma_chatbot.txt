@@ -1,0 +1,37 @@
+breve funcionamento do chatbot com parser e handlers
+
+WhatsApp
+     │
+     ▼
+Nova mensagem
+     │
+     ▼
+handleMessages()
+     │
+     ▼
+Verifica se deve ignorar
+     │
+     ▼
+parseMessage()
+     │
+     ▼
+Tem mídia?
+     │
+ ┌───┴────┐
+ │        │
+Não      Sim
+ │        │
+ │    downloadAttachment()
+ │        │
+ └───┬────┘
+     ▼
+callApi()
+     │
+     ▼
+Recebe resposta da API
+     │
+     ▼
+sendMessage()
+     │
+     ▼
+Usuário recebe a resposta

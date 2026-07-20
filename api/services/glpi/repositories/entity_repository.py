@@ -1,14 +1,17 @@
 from db import get_glpi_connection
 
+from services.glpi.repositories.base_repository import BaseRepository
 
-class EntityRepository:
 
-    def find_by_id(self, entity_id: int):
+class EntityRepository(BaseRepository):
+
+    def __init__(self):
+        super().__init__(get_glpi_connection)
+
+    def find_by_id(self, entity_id):
 
         sql = """
-
         SELECT
-
             id,
             name,
             completename,
@@ -17,60 +20,39 @@ class EntityRepository:
             registration_number,
             email,
             phonenumber
-
         FROM glpi_entities
-
         WHERE id=%s
-
         LIMIT 1
-
         """
 
-        with get_glpi_connection() as conn:
-            with conn.cursor() as cursor:
-                cursor.execute(sql, (entity_id,))
-                return cursor.fetchone()
+        return self.fetch_one(sql, (entity_id,))
 
-
-    def find_exact(self, name: str):
+    def find_exact(self, name):
 
         sql = """
-
         SELECT
-
             id,
             name,
             completename
-
         FROM glpi_entities
-
         WHERE LOWER(name)=LOWER(%s)
-
         LIMIT 1
-
         """
 
-        with get_glpi_connection() as conn:
-            with conn.cursor() as cursor:
-                cursor.execute(sql, (name,))
-                return cursor.fetchone()
+        return self.fetch_one(sql, (name,))
 
+    def search(self, text):
 
-    def search(self, text: str):
+        like = f"%{text}%"
 
         sql = """
-
         SELECT
-
             id,
             name,
             completename,
             level
-
         FROM glpi_entities
-
         WHERE
-
             LOWER(
                 CONCAT_WS(
                     ' ',
@@ -78,44 +60,24 @@ class EntityRepository:
                     completename
                 )
             )
-
             LIKE LOWER(%s)
-
         ORDER BY
-
             completename
-
         LIMIT 20
-
         """
 
-        like = f"%{text}%"
-
-        with get_glpi_connection() as conn:
-            with conn.cursor() as cursor:
-                cursor.execute(sql, (like,))
-                return cursor.fetchall()
-
+        return self.fetch_all(sql, (like,))
 
     def list(self):
 
         sql = """
-
         SELECT
-
             id,
             name,
             completename
-
         FROM glpi_entities
-
         ORDER BY
-
             completename
-
         """
 
-        with get_glpi_connection() as conn:
-            with conn.cursor() as cursor:
-                cursor.execute(sql)
-                return cursor.fetchall()
+        return self.fetch_all(sql)

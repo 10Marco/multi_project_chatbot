@@ -2,60 +2,42 @@ from services.glpi.conversation_service import ConversationService
 
 conversation = ConversationService()
 
-
 def to_whatsapp(reply):
 
-    if reply.type == "text":
+    builders = {
 
-        return {
-
+        "text": lambda r: {
             "type": "text",
+            "text": r.data["text"]
+        },
 
-            "text": reply.data["text"]
-
-        }
-
-    if reply.type == "image":
-
-        return {
-
+        "image": lambda r: {
             "type": "image",
+            **r.data
+        },
 
-            **reply.data
-
-        }
-
-    if reply.type == "document":
-
-        return {
-
+        "document": lambda r: {
             "type": "document",
+            **r.data
+        },
 
-            **reply.data
-
-        }
-
-    if reply.type == "buttons":
-
-        return {
-
+        "buttons": lambda r: {
             "type": "buttons",
+            **r.data
+        },
 
-            **reply.data
-
-        }
-
-    if reply.type == "list":
-
-        return {
-
+        "list": lambda r: {
             "type": "list",
-
-            **reply.data
-
+            **r.data
         }
 
-    raise ValueError(f"Tipo desconhecido: {reply.type}")
+    }
+
+    if reply.type not in builders:
+
+        raise ValueError(f"Tipo desconhecido: {reply.type}")
+
+    return builders[reply.type](reply)
 
 
 def handle_glpi_flow(sender, message, payload=None):
@@ -67,7 +49,5 @@ def handle_glpi_flow(sender, message, payload=None):
     )
 
     return [
-
         to_whatsapp(reply)
-
     ]

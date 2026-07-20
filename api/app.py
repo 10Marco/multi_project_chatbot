@@ -1,6 +1,13 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, UploadFile, File, Form
 from ChatOrchestrator import ChatOrchestrator
 from dotenv import load_dotenv
+from factories.payload_factory import PayloadFactory
+
+import os
+import shutil
+import tempfile
+
+
 
 load_dotenv(dotenv_path="/app/.env")
 load_dotenv()
@@ -11,5 +18,16 @@ orchestrator = ChatOrchestrator()
 
 
 @app.post("/whatsapp")
-def whatsapp(payload: dict):
+async def whatsapp(
+    sender: str = Form(...),
+    message: str = Form(""),
+    file: UploadFile | None = File(None)
+):
+
+    payload = await PayloadFactory.create(
+        sender,
+        message,
+        file
+    )
+
     return orchestrator.handle(payload)

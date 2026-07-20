@@ -1,0 +1,14 @@
+## GLPI Document Upload
+
+Durante a integração foi identificado que o ambiente possuía uma customização na tabela `glpi_documents`:
+
+- coluna `tickets_id` era `NOT NULL`
+- a API REST do GLPI não preenche esse campo
+- isso fazia `Document::add()` retornar false com `ERROR_GLPI_ADD`
+
+Correção aplicada:
+
+ALTER TABLE glpi_documents
+MODIFY tickets_id INT(11) UNSIGNED NULL;
+
+O relacionamento com tickets continua sendo realizado automaticamente pela tabela `glpi_documents_items`.
