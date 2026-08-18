@@ -1,5 +1,5 @@
 
-# 🤖 Chatbot Multi-Projeto (WhatsApp + Rasa + FastAPI)
+# 🤖 Chatbot Multi-Projeto (WhatsApp + FastAPI)
 
 Sistema de chatbot inteligente integrado ao WhatsApp, capaz de atender múltiplos projetos com uma única arquitetura.
 
@@ -8,7 +8,6 @@ Sistema de chatbot inteligente integrado ao WhatsApp, capaz de atender múltiplo
 ## 🚀 Features
 
 * 📲 Integração com WhatsApp (Baileys)
-* 🧠 Motor conversacional com Rasa
 * ⚡ Backend em FastAPI
 * 🔁 Retry automático de requisições
 * 🧵 Estado de conversa com Redis
@@ -23,8 +22,6 @@ Sistema de chatbot inteligente integrado ao WhatsApp, capaz de atender múltiplo
 WhatsApp (Baileys)
         ↓
 FastAPI (Router + lógica)
-        ↓
-Rasa (fluxo conversacional)
         ↓
 Services (integrações específicas)
         ↓
@@ -82,10 +79,9 @@ LOJA_NUMBER=5561777777777@c.us
 ## 🧠 Fluxo
 
 1. Usuário inicia conversa
-2. Rasa controla o diálogo
-3. Backend executa ações
-4. Redis mantém o estado
-5. Resposta retorna ao WhatsApp
+2. Backend executa ações
+3. Redis mantém o estado
+4. Resposta retorna ao WhatsApp
 
 ---
 
@@ -94,7 +90,6 @@ LOJA_NUMBER=5561777777777@c.us
 ```
 api/
 services/
-rasa/
 whatsapp-service/
 docker-compose.yml
 ```
