@@ -1,7 +1,1 @@
-from .user_repository import UserRepository
-from .ticket_repository import TicketRepository
-from .category_repository import CategoryRepository
-from .location_repository import LocationRepository
-from .group_repository import GroupRepository
-from .entity_repository import EntityRepository
-from .chatbot_repository import ChatbotRepository
+

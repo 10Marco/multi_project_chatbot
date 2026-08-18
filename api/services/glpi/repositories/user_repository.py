@@ -21,12 +21,15 @@ class UserRepository(BaseRepository):
             name=row["name"],
             firstname=row["firstname"],
             realname=row["realname"],
+            registration=row.get("registration_number"),
             phone=row["phone"],
             mobile=row["mobile"],
             email=None,
+
             location_id=row["locations_id"],
             entity_id=row["entities_id"],
             group_id=row["groups_id"],
+
             is_active=bool(row["is_active"])
         )
 
@@ -34,19 +37,23 @@ class UserRepository(BaseRepository):
 
         sql = """
         SELECT
-            id,
-            name,
-            firstname,
-            realname,
-            phone,
-            mobile,
-            locations_id,
-            entities_id,
-            groups_id,
-            is_active
-        FROM glpi_users
-        WHERE id=%s
-          AND is_deleted=0
+            u.id,
+            u.name,
+            u.firstname,
+            u.realname,
+            u.registration_number,
+            u.phone,
+            u.mobile,
+            u.locations_id,
+            u.entities_id,
+            u.groups_id,
+            u.is_active
+
+        FROM glpi_users u
+
+        WHERE u.id=%s
+          AND u.is_deleted=0
+
         LIMIT 1
         """
 
@@ -54,29 +61,62 @@ class UserRepository(BaseRepository):
             self.fetch_one(sql, (user_id,))
         )
 
+    def find_by_mobile(self, mobile: str):
+
+        sql = """
+        SELECT
+            u.id,
+            u.name,
+            u.firstname,
+            u.realname,
+            u.registration_number,
+            u.phone,
+            u.mobile,
+            u.locations_id,
+            u.entities_id,
+            u.groups_id,
+            u.is_active
+
+        FROM glpi_users u
+
+        WHERE u.mobile=%s
+          AND u.is_deleted=0
+          AND u.is_active=1
+
+        LIMIT 1
+        """
+
+        return self._row_to_requester(
+            self.fetch_one(sql, (mobile,))
+        )
+
     def find_by_phone(self, phone: str):
 
         sql = """
         SELECT
-            id,
-            name,
-            firstname,
-            realname,
-            phone,
-            mobile,
-            locations_id,
-            entities_id,
-            groups_id,
-            is_active
-        FROM glpi_users
+            u.id,
+            u.name,
+            u.firstname,
+            u.realname,
+            u.registration_number,
+            u.phone,
+            u.mobile,
+            u.locations_id,
+            u.entities_id,
+            u.groups_id,
+            u.is_active
+
+        FROM glpi_users u
+
         WHERE
-        (
-            phone=%s
-            OR phone2=%s
-            OR mobile=%s
-        )
-        AND is_deleted=0
-        AND is_active=1
+            (
+                u.phone=%s
+                OR u.phone2=%s
+                OR u.mobile=%s
+            )
+            AND u.is_deleted=0
+            AND u.is_active=1
+
         LIMIT 1
         """
 
@@ -95,19 +135,23 @@ class UserRepository(BaseRepository):
 
         sql = """
         SELECT
-            id,
-            name,
-            firstname,
-            realname,
-            phone,
-            mobile,
-            locations_id,
-            entities_id,
-            groups_id,
-            is_active
-        FROM glpi_users
-        WHERE registration_number=%s
-        AND is_deleted=0
+            u.id,
+            u.name,
+            u.firstname,
+            u.realname,
+            u.registration_number,
+            u.phone,
+            u.mobile,
+            u.locations_id,
+            u.entities_id,
+            u.groups_id,
+            u.is_active
+
+        FROM glpi_users u
+
+        WHERE u.registration_number=%s
+          AND u.is_deleted=0
+
         LIMIT 1
         """
 
@@ -119,33 +163,38 @@ class UserRepository(BaseRepository):
 
         sql = """
         SELECT
-            id,
-            name,
-            firstname,
-            realname,
-            phone,
-            mobile,
-            locations_id,
-            entities_id,
-            groups_id,
-            is_active
-        FROM glpi_users
+            u.id,
+            u.name,
+            u.firstname,
+            u.realname,
+            u.registration_number,
+            u.phone,
+            u.mobile,
+            u.locations_id,
+            u.entities_id,
+            u.groups_id,
+            u.is_active
+
+        FROM glpi_users u
+
         WHERE
-            is_deleted=0
+            u.is_deleted=0
             AND (
                 LOWER(
                     CONCAT_WS(
                         ' ',
-                        firstname,
-                        realname,
-                        name
+                        u.firstname,
+                        u.realname,
+                        u.name
                     )
                 )
                 LIKE LOWER(%s)
             )
+
         ORDER BY
-            firstname,
-            realname
+            u.firstname,
+            u.realname
+
         LIMIT 10
         """
 
@@ -164,7 +213,9 @@ class UserRepository(BaseRepository):
             return []
 
         if value.isdigit():
+
             user = self.find_by_registration(value)
+
             return [user] if user else []
 
         return self.search_by_name(value)

@@ -29,7 +29,12 @@ def to_whatsapp(reply):
         "list": lambda r: {
             "type": "list",
             **r.data
-        }
+        },
+        "sifop_folha": lambda r: {
+            "type": "sifop_folha",
+            **r.data
+        },
+        
 
     }
 

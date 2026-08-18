@@ -27,11 +27,12 @@ class Reply(BaseModel):
         )
 
     @classmethod
-    def document(cls, document, caption=None):
+    def document(cls, document, filename, caption=None):
         return cls(
             type="document",
             data={
                 "document": document,
+                "filename": filename,
                 "caption": caption
             }
         )
@@ -55,6 +56,17 @@ class Reply(BaseModel):
                 "options": options
             }
         )
+
+    @classmethod
+    def action(cls, action, data=None):
+        return cls(
+            type="action",
+            data={
+                "action": action,
+                "data": data or {}
+            }
+        )    
+        
     
     @classmethod
     def success(cls, text):
@@ -71,3 +83,15 @@ class Reply(BaseModel):
     @classmethod
     def info(cls, text):
         return cls.text(f"ℹ️ {text}")
+    
+    @classmethod
+    def sifop_folha(cls, tipo, id, mes, filename):
+        return cls(
+            type="sifop_folha",
+            data={
+                "tipo": tipo,
+                "id": id,
+                "mes": mes,
+                "filename": filename
+            }
+        )

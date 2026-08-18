@@ -1,5 +1,7 @@
 from db import get_glpi_connection
 from services.glpi.repositories.base_repository import BaseRepository
+from services.glpi.models.ticket_summary import TicketSummary
+
 
 
 class TicketRepository(BaseRepository):
@@ -12,12 +14,7 @@ class TicketRepository(BaseRepository):
         sql = """
         SELECT
             t.id,
-            t.name,
-            t.status,
-            t.priority,
-            t.date,
-            t.itilcategories_id,
-            t.locations_id
+            t.name
         FROM glpi_tickets t
         INNER JOIN glpi_tickets_users tu
             ON tu.tickets_id = t.id
@@ -31,7 +28,15 @@ class TicketRepository(BaseRepository):
         LIMIT 20
         """
 
-        return self.fetch_all(sql, (user_id,))
+        rows = self.fetch_all(sql, (user_id,))
+
+        return [
+            TicketSummary(
+                id=row["id"],
+                name=row["name"]
+            )
+            for row in rows
+        ]
 
     def find_last_by_requester(self, user_id):
 

@@ -1,33 +1,27 @@
-function getDisconnectStatusCode(update) {
+const logger = require("./logger");
 
+function getDisconnectStatusCode(update) {
     const error = update.lastDisconnect?.error;
 
     return error?.output?.statusCode;
-
 }
 
 function logDisconnectReason(update) {
-
     const error = update.lastDisconnect?.error;
 
     const statusCode = getDisconnectStatusCode(update);
 
-    console.log(
-
-        `❌ conexão fechada: ${error?.message || "motivo não informado"}`
-
+    logger.info(
+        "conexão fechada: %s",
+        error?.message || "motivo não informado"
     );
 
-    if (statusCode)
-
-        console.log(`ℹ️ status ${statusCode}`);
-
+    if (statusCode) {
+        logger.info("status %s", statusCode);
+    }
 }
 
 module.exports = {
-
     getDisconnectStatusCode,
-
     logDisconnectReason
-
 };

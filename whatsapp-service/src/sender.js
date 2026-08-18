@@ -1,40 +1,38 @@
 const fs = require("fs");
+const logger = require("./logger");
 
 async function sendText(sock, to, text) {
-
     return sock.sendMessage(to, {
         text
     });
-
 }
 
 async function sendImage(sock, to, imagePath, caption = "") {
-
     return sock.sendMessage(to, {
         image: fs.readFileSync(imagePath),
         caption
     });
-
 }
 
-async function sendDocument(sock, to, documentPath, filename) {
+async function sendDocument(sock, to, document, filename) {
+
+    const data = Buffer.isBuffer(document)
+        ? document
+        : fs.readFileSync(document);
 
     return sock.sendMessage(to, {
-        document: fs.readFileSync(documentPath),
-        fileName: filename
+        document: data,
+        fileName: filename,
+        mimetype: "application/pdf"
     });
-
 }
 
 async function sendMessage(sock, to, payload) {
-
-    console.log("➡️ SEND");
-    console.dir(payload, { depth: null });
+    logger.debug("SEND");
+    logger.debug(payload);
 
     switch (payload.type) {
-
         case "text":
-
             return sendText(
                 sock,
                 to,
@@ -42,7 +40,6 @@ async function sendMessage(sock, to, payload) {
             );
 
         case "image":
-
             return sendImage(
                 sock,
                 to,
@@ -51,7 +48,6 @@ async function sendMessage(sock, to, payload) {
             );
 
         case "document":
-
             return sendDocument(
                 sock,
                 to,
@@ -60,23 +56,15 @@ async function sendMessage(sock, to, payload) {
             );
 
         default:
-
             throw new Error(
                 `Tipo de mensagem não suportado: ${payload.type}`
             );
-
     }
-
 }
 
 module.exports = {
-
     sendMessage,
-
     sendText,
-
     sendImage,
-
     sendDocument
-
 };

@@ -3,6 +3,7 @@ const FormData = require("form-data");
 const fs = require("fs");
 
 const { API_URL } = require("./config");
+const logger = require("./logger");
 
 const sleep = (ms) =>
     new Promise((resolve) => setTimeout(resolve, ms));
@@ -25,10 +26,9 @@ async function callApi(payload, retries = 3) {
         return await axios.post(API_URL, form, {
             headers: form.getHeaders(),
         });
-
     } catch (err) {
         if (retries > 0) {
-            console.log(`🔁 Retry (${4 - retries}/3)...`);
+            logger.debug("Retry (%s/3)...", 4 - retries);
 
             await sleep(1000);
 

@@ -1,28 +1,26 @@
-const winston = require("winston");
-const path = require("path");
-const { LOG_PATH } = require("./config");
+const DEBUG = String(process.env.DEBUG || "false").toLowerCase() === "true";
 
-const logger = winston.createLogger({
-    level: "info",
+function log(method, args) {
+    if (!DEBUG) return;
+    console[method](...args);
+}
 
-    format: winston.format.combine(
-        winston.format.timestamp(),
-        winston.format.errors({ stack: true }),
-        winston.format.json()
-    ),
+const baileysLogger = {
+    level: DEBUG ? "debug" : "silent",
+    child: () => baileysLogger,
+    trace: (...args) => log("log", args),
+    debug: (...args) => log("log", args),
+    info: (...args) => log("log", args),
+    warn: (...args) => log("warn", args),
+    error: (...args) => log("error", args),
+    fatal: (...args) => log("error", args)
+};
 
-    transports: [
-        new winston.transports.File({
-            filename: path.join(LOG_PATH, "error.log"),
-            level: "error"
-        }),
-
-        new winston.transports.File({
-            filename: path.join(LOG_PATH, "combined.log")
-        }),
-
-        new winston.transports.Console()
-    ]
-});
-
-module.exports = logger;
+module.exports = {
+    debug: (...args) => log("log", args),
+    info: (...args) => log("log", args),
+    warn: (...args) => log("warn", args),
+    error: (...args) => log("error", args),
+    isDebug: () => DEBUG,
+    baileysLogger
+};

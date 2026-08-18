@@ -8,6 +8,7 @@ const {
 const qrcode = require("qrcode-terminal");
 
 const { AUTH_PATH } = require("./config");
+const logger = require("./logger");
 
 const {
     scheduleReconnect,
@@ -26,113 +27,77 @@ const {
 let starting = false;
 
 async function start() {
-
-    if (starting)
-        return;
+    if (starting) return;
 
     starting = true;
 
     try {
-
         const { state, saveCreds } =
             await useMultiFileAuthState(AUTH_PATH);
-            console.log("=================================");
-            console.log("WhatsApp Service");
-            console.log("AUTH:", AUTH_PATH);
-            console.log("=================================");
+
+        logger.info("WhatsApp Service");
+        logger.info("AUTH: %s", AUTH_PATH);
 
         const { version } =
             await fetchLatestBaileysVersion();
-        console.log("Versão WA:", version);    
+
+        logger.info("Versão WA: %s", version);
 
         const sock = makeWASocket({
-
             version,
-
             auth: state,
-
+            logger: logger.baileysLogger,
             printQRInTerminal: false,
-
             syncFullHistory: false,
-
             markOnlineOnConnect: false
-
         });
 
         sock.ev.on("creds.update", saveCreds);
 
         sock.ev.on("connection.update", (update) => {
-
             const { connection, qr } = update;
 
             if (qr) {
-
                 console.log("📱 ESCANEIE O QR:");
                 qrcode.generate(qr, { small: true });
-
             }
 
             if (connection === "open") {
-
                 resetReconnect();
-
-                console.log("🚀 WhatsApp conectado!");
-
+                logger.info("WhatsApp conectado!");
                 return;
-
             }
 
             if (connection === "close") {
-
                 logDisconnectReason(update);
 
                 const status = getDisconnectStatusCode(update);
 
-                console.log("Status:", status);
-                console.log("DisconnectReason.loggedOut:", DisconnectReason.loggedOut);
+                logger.debug("Status: %s", status);
+                logger.debug("DisconnectReason.loggedOut: %s", DisconnectReason.loggedOut);
 
                 if (status === DisconnectReason.loggedOut) {
-
-                    console.log("🔐 Sessão realmente expirada.");
-
+                    logger.info("Sessão realmente expirada.");
                     return;
-
                 }
 
                 scheduleReconnect(start);
-
             }
-
         });
 
         sock.ev.on("messages.upsert", async ({ messages }) => {
-
             try {
-
                 await handleMessages(sock, messages);
-
             } catch (err) {
-
-                console.error(err);
-
+                logger.error(err);
             }
-
         });
-
-    }
-
-    finally {
-
+    } finally {
         starting = false;
-
     }
-
 }
 
 start().catch((err) => {
-
-    console.error(err);
-
+    logger.error(err);
     scheduleReconnect(start);
-
 });

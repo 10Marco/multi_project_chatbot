@@ -1,6 +1,7 @@
 import os
 
 from services.glpi.client import upload_document_glpi
+from utils.logger import error
 
 
 class AttachmentService:
@@ -27,4 +28,4 @@ class AttachmentService:
             if os.path.exists(attachment.local_path):
                 os.remove(attachment.local_path)
         except Exception as e:
-            print(f"Erro ao remover {attachment.local_path}: {e}")
+            error("Erro ao remover %s: %s", attachment.local_path, e)

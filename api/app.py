@@ -3,12 +3,6 @@ from ChatOrchestrator import ChatOrchestrator
 from dotenv import load_dotenv
 from factories.payload_factory import PayloadFactory
 
-import os
-import shutil
-import tempfile
-
-
-
 load_dotenv(dotenv_path="/app/.env")
 load_dotenv()
 

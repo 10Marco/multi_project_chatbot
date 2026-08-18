@@ -1,6 +1,7 @@
 from db import get_chatbot_connection
 
 from services.glpi.repositories.base_repository import BaseRepository
+from utils.logger import debug
 
 
 class ChatbotRepository(BaseRepository):
@@ -10,7 +11,7 @@ class ChatbotRepository(BaseRepository):
 
     def find_by_phone(self, phone: str):
 
-        print(f"[CHATBOT_DB] procurando {phone}")
+        debug("[CHATBOT_DB] procurando %s", phone)
 
         sql = """
         SELECT *
@@ -24,7 +25,7 @@ class ChatbotRepository(BaseRepository):
 
     def link_phone(self, users_id: int, phone: str):
 
-        print(f"[CHATBOT_DB] vinculando {phone} -> {users_id}")
+        debug("[CHATBOT_DB] vinculando %s -> %s", phone, users_id)
 
         sql = """
         INSERT INTO chatbot_glpi
@@ -58,32 +59,22 @@ class ChatbotRepository(BaseRepository):
             )
         )
 
-    def unlink_phone(self, phone: str):
+    def find_by_user_id(self, users_id: int):
 
         sql = """
-        UPDATE chatbot_glpi
-        SET
-            active=0,
-            updated_at=NOW()
-        WHERE whatsapp=%s
-        """
-
-        self.execute(sql, (phone,))
-
-    def update_phone(self, users_id: int, phone: str):
-
-        sql = """
-        UPDATE chatbot_glpi
-        SET
-            whatsapp=%s,
-            updated_at=NOW()
+        SELECT
+            id,
+            users_id,
+            whatsapp,
+            active,
+            created_at,
+            updated_at,
+            id_sifop,
+            tipo
+        FROM chatbot_glpi
         WHERE users_id=%s
+        AND active=1
+        LIMIT 1
         """
 
-        self.execute(
-            sql,
-            (
-                phone,
-                users_id
-            )
-        )
+        return self.fetch_one(sql, (users_id,))

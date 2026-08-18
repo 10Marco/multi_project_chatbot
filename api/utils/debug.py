@@ -1,7 +1,16 @@
 import os
 import traceback
 
+from utils.environment import DEBUG
+from utils.logger import exception
+
+
 def debug_reply(exc: Exception):
+    if not DEBUG:
+        return {
+            "type": "text",
+            "text": "Erro interno."
+        }
 
     debug_console(exc)
 
@@ -10,7 +19,7 @@ def debug_reply(exc: Exception):
     return {
         "type": "text",
         "text": (
-            "❌ Erro interno.\n\n"
+            "Erro interno.\n\n"
             f"Arquivo: {os.path.basename(last.filename)}\n"
             f"Linha: {last.lineno}\n"
             f"Função: {last.name}\n\n"
@@ -21,6 +30,4 @@ def debug_reply(exc: Exception):
 
 
 def debug_console(exc: Exception):
-    print("\n========== EXCEPTION ==========")
-    traceback.print_exc()
-    print("===============================\n")
+    exception("Exceção não tratada", exc_info=exc)

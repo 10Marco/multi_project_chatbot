@@ -2,6 +2,9 @@ const { callApi } = require("./apiClient");
 const { parseMessage } = require("./messageParser");
 const { sendMessage } = require("./sender");
 const { downloadAttachment } = require("./mediaHandler");
+const { resolveSender } = require("./senderResolver");
+const logger = require("./logger");
+const SifopClient = require("./SifopClient");
 
 async function handleMessages(sock, messages) {
 
@@ -16,12 +19,36 @@ async function handleMessages(sock, messages) {
 
     const parsed = parseMessage(msg);
 
-    console.log("\n==============================");
-    console.log(`📩 ${parsed.sender}`);
-    console.log(`💬 ${parsed.text}`);
-    console.log("==============================");
-
     try {
+
+        const sender = await resolveSender(sock, msg);
+
+        logger.debug(
+            "LID/JID original: %s",
+            parsed.sender
+        );
+
+        logger.debug(
+            "Sender resolvido: %s",
+            sender
+        );
+
+        if (!sender) {
+
+            logger.warn(
+                "Não foi possível resolver o sender: %s",
+                parsed.sender
+            );
+
+            return;
+        }
+
+        logger.debug(
+            "Mensagem recebida de %s: %s",
+            sender,
+            parsed.text
+        );
+
         let attachment = null;
 
         if (parsed.hasMedia) {
@@ -32,7 +59,7 @@ async function handleMessages(sock, messages) {
         }
 
         const response = await callApi({
-            sender: parsed.sender,
+            sender: sender,
             message: parsed.text,
             attachment
         });
@@ -40,7 +67,42 @@ async function handleMessages(sock, messages) {
         const { data } = response;
 
         if (data.messages?.length) {
+
             for (const message of data.messages) {
+
+                if (message.type === "sifop_folha") {
+
+                    logger.info(
+                        "Gerando folha SIFOP: tipo=%s id=%s mes=%s",
+                        message.tipo,
+                        message.id,
+                        message.mes
+                    );
+
+                    const pdf = await SifopClient.gerarFolha(
+                        message.tipo,
+                        message.id,
+                        message.mes
+                    );
+
+                    await sendMessage(
+                        sock,
+                        parsed.sender,
+                        {
+                            type: "document",
+                            document: pdf,
+                            filename: message.filename
+                        }
+                    );
+
+                    logger.info(
+                        "Folha SIFOP enviada: %s",
+                        message.filename
+                    );
+
+                    continue;
+                }
+
                 await sendMessage(
                     sock,
                     parsed.sender,
@@ -48,13 +110,16 @@ async function handleMessages(sock, messages) {
                 );
             }
         }
-
-    } catch (err) {
-        console.error(err.response?.data || err.message);
     }
+    catch (error) {
 
+        logger.error(
+            "Erro ao processar a mensagem de %s: %s",
+            parsed.sender,
+            error.message
+        );
+    }
 }
-
 
 module.exports = {
     handleMessages

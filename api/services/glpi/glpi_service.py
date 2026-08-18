@@ -7,18 +7,21 @@ from .repositories.group_repository import GroupRepository
 from .repositories.entity_repository import EntityRepository
 from .services.ticket_service import TicketService
 
+from utils.logger import debug
+
+import os
+
 
 class GLPIService:
 
     def __init__(self):
 
+        self.web_url = os.getenv("GLPI_WEB_URL")
+
         self.users = UserRepository()
         self.chatbot = ChatbotRepository()
 
-        # consultas SQL
         self.tickets = TicketRepository()
-
-        # criação via REST
         self.ticket_service = TicketService()
 
         self.locations = LocationRepository()
@@ -26,51 +29,103 @@ class GLPIService:
         self.groups = GroupRepository()
         self.entities = EntityRepository()
 
-    # Usuários
     def identify_user(self, phone):
 
-        mapping = self.chatbot.find_by_phone(phone)
+        debug(
+            "[IDENTIFY] procurando mobile: %s",
+            phone
+        )
 
-        if not mapping:
-            print("[IDENTIFY] vínculo não encontrado")
-            return None
-
-        user = self.users.find_by_id(mapping["users_id"])
+        user = self.users.find_by_mobile(phone)
 
         if not user:
-            print("[IDENTIFY] usuário não encontrado")
+
+            debug(
+                "[IDENTIFY] mobile não autorizado: %s",
+                phone
+            )
+
             return None
+
+        debug(
+            "[IDENTIFY] usuário identificado: %s (%s)",
+            user.name,
+            user.id
+        )
+
+        debug(
+            "[IDENTIFY] SIFOP: id=%s tipo=%s",
+            user.id_sifop,
+            user.tipo
+        )
 
         return user
 
     def search_user(self, text):
+
         return self.users.search(text)
 
     def link_phone(self, requester, phone):
-        self.chatbot.link_phone(requester.id, phone)
 
-    # Chamados
+        self.chatbot.link_phone(
+            requester.id,
+            phone
+        )
+
     def get_open_tickets(self, requester):
-        return self.tickets.find_open_by_requester(requester.id)
+
+        return self.tickets.find_open_by_requester(
+            requester.id
+        )
 
     def create_ticket(self, ticket):
+
         return self.ticket_service.create(ticket)
 
-   # Metadata
+
     def get_location(self, requester):
 
         if requester.location_id:
-            return self.locations.find_by_id(requester.location_id)
+
+            return self.locations.find_by_id(
+                requester.location_id
+            )
 
     def get_group(self, requester):
 
         if requester.group_id:
-            return self.groups.find_by_id(requester.group_id)
+
+            return self.groups.find_by_id(
+                requester.group_id
+            )
 
     def get_entity(self, requester):
 
         if requester.entity_id:
-            return self.entities.find_by_id(requester.entity_id)
+
+            return self.entities.find_by_id(
+                requester.entity_id
+            )
 
     def get_default_category(self):
+
         return self.categories.find_by_id(47)
+
+    def get_ticket_url(self, ticket_id):
+
+        return (
+            f"{self.web_url}/front/ticket.form.php"
+            f"?id={ticket_id}"
+        )
+    
+    def get_sifop_data(self, requester):
+
+        mapping = self.chatbot.find_by_user_id(requester.id)
+
+        if not mapping:
+            return None
+
+        return {
+            "id_sifop": mapping["id_sifop"],
+            "tipo": mapping["tipo"]
+        }

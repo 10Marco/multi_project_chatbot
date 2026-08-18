@@ -18,6 +18,8 @@ services:
 
   whatsapp:
     build: ./whatsapp-service
+    env_file:
+      - .env
     volumes:
       - ./whatsapp-service/runtime:/app/runtime
     depends_on:
